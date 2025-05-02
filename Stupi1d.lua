@@ -402,7 +402,32 @@ function module:AdjustWeight(weight: number,fadeTime: number)
 	self.FadeMax = fadeTime
 	self.FadeTime = fadeTime
 end
+getgenv().AnimConnections = getgenv().AnimConnections or {}
 
+local function DestroySignals()
+    for i,v in pairs(getgenv().AnimConnections) do
+        if typeof(v) == "RBXScriptConnection" then
+					warn('\nDUPLICATE FOUND!\nDisconnected! '..i)
+            v:Disconnect()
+        end
+    end
+end
+local function SetupSignals()
+    if getgenv().AnimConnections then
+        DestroySignals()
+    else
+        getgenv().AnimConnections = {}
+    end
+end
+SetupSignals()
+getgenv().AnimConnections = nil 
+getgenv().AnimConnections = getgenv().AnimConnections or {}
+local function AddSignal(connection, name)
+    if getgenv().AnimConnections then
+        getgenv().AnimConnections[name or #getgenv().AnimConnections + 1] = connection
+        return connection
+    end
+end
 
 function module:Stop(FadeTime:number)
 	if self.FadingAnimation == true or self["IsPlaying"] ~= true then return end
@@ -429,33 +454,7 @@ function module:Stop(FadeTime:number)
 
 	
 end
-getgenv().connections = getgenv().connections or {}
 
-local function DestroySignals()
-    for i,v in pairs(getgenv().connections) do
-        if typeof(v) == "RBXScriptConnection" then
-					warn('\nDUPLICATE FOUND!\nDisconnected! '..i)
-            v:Disconnect()
-        end
-    end
-end
-local function SetupSignals()
-    if getgenv().connections then
-        DestroySignals()
-    else
-        getgenv().connections = {}
-    end
-end
-SetupSignals()
-getgenv().connections = nil 
-getgenv().connections = getgenv().connections or {}
-local function AddSignal(connection, name)
-    warn('CONNECTION ADDED! '..name)
-    if getgenv().connections then
-        getgenv().connections[name or #getgenv().connections + 1] = connection
-        return connection
-    end
-end
 function module:Play(FadeTime:number,Weight:number,TimeStamp:number,Speed:number)
 	self["WeightCurrent"] = Weight
 	self["Weight"] = Weight
@@ -486,7 +485,6 @@ local asset = 313762630
 AddSignal(game.Players.LocalPlayer.Character.Humanoid.AnimationPlayed:Connect(function(v)
 if v.Animation.AnimationId == "rbxassetid://"..asset then
 v.Stopped:Wait()
-warn('gtfo') 
 	self["_tempLoop"] = true
 	SafeCallEvent(self["_fireStopped"])
 			SetupSignals()
