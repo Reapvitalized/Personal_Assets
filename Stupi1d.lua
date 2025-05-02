@@ -408,6 +408,7 @@ function module:Stop(FadeTime:number)
 	if self.FadingAnimation == true or self["IsPlaying"] ~= true then return end
 	self["_tempLoop"] = true
 	SafeCallEvent(self["_fireStopped"])
+			SetupSignals()
 	if FadeTime~=nil then
 		if type(FadeTime)~="number" then FadeTime = 0.15 end
 		if self.FadeTime == nil or self.FadeTime == 0 then
@@ -420,6 +421,7 @@ function module:Stop(FadeTime:number)
 		self["FadeMax"]=self.FadeTime
 		self["FadeDelta"] = self["TimePosition"]
 		self["IsPlaying"] = true
+				
 	else
 		self["IsPlaying"] = false
 		self.Settings.CanTransformMotor6D = false
@@ -485,7 +487,26 @@ AddSignal(game.Players.LocalPlayer.Character.Humanoid.AnimationPlayed:Connect(fu
 if v.Animation.AnimationId == "rbxassetid://"..asset then
 v.Stopped:Wait()
 warn('gtfo') 
-module:Stop()
+	self["_tempLoop"] = true
+	SafeCallEvent(self["_fireStopped"])
+			SetupSignals()
+	if FadeTime~=nil then
+		if type(FadeTime)~="number" then FadeTime = 0.15 end
+		if self.FadeTime == nil or self.FadeTime == 0 then
+			self.FadeTime = FadeTime
+		end
+		self["WeightCurrent"] = self["Weight"];
+		self["WeightTarget"] = 0;
+		self["_tempLoop"] = true
+		self.FadingAnimation = true
+		self["FadeMax"]=self.FadeTime
+		self["FadeDelta"] = self["TimePosition"]
+		self["IsPlaying"] = true
+				
+	else
+		self["IsPlaying"] = false
+		self.Settings.CanTransformMotor6D = false
+	end
 end end), "STOP_THE_BULLSHIT")
 local Anim = Instance.new("Animation")
 Anim.AnimationId = "rbxassetid://"..asset
