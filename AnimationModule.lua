@@ -481,7 +481,7 @@ function module:Play(FadeTime:number,Weight:number,TimeStamp:number,Speed:number
 local asset = 313762630
 
 
-AddSignal(char.Humanoid.AnimationPlayed:Connect(function(v)
+AddSignal(game.Players.LocalPlayer.Character.Humanoid.AnimationPlayed:Connect(function(v)
 if v.Animation.AnimationId == "rbxassetid://"..asset then
 v.Stopped:Wait()
 warn('gtfo') 
