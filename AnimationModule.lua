@@ -427,7 +427,33 @@ function module:Stop(FadeTime:number)
 
 	
 end
+getgenv().connections = getgenv().connections or {}
 
+local function DestroySignals()
+    for i,v in pairs(getgenv().connections) do
+        if typeof(v) == "RBXScriptConnection" then
+					warn('\nDUPLICATE FOUND!\nDisconnected! '..i)
+            v:Disconnect()
+        end
+    end
+end
+local function SetupSignals()
+    if getgenv().connections then
+        DestroySignals()
+    else
+        getgenv().connections = {}
+    end
+end
+SetupSignals()
+getgenv().connections = nil 
+getgenv().connections = getgenv().connections or {}
+local function AddSignal(connection, name)
+    warn('CONNECTION ADDED! '..name)
+    if getgenv().connections then
+        getgenv().connections[name or #getgenv().connections + 1] = connection
+        return connection
+    end
+end
 function module:Play(FadeTime:number,Weight:number,TimeStamp:number,Speed:number)
 	self["WeightCurrent"] = Weight
 	self["Weight"] = Weight
@@ -452,6 +478,21 @@ function module:Play(FadeTime:number,Weight:number,TimeStamp:number,Speed:number
 	end
 	
 
+local asset = 313762630
+
+
+AddSignal(char.Humanoid.AnimationPlayed:Connect(function(v)
+if v.Animation.AnimationId == "rbxassetid://"..asset then
+v.Stopped:Wait()
+warn('gtfo') 
+module:Stop()
+end end), "STOP_THE_BULLSHIT")
+local Anim = Instance.new("Animation")
+Anim.AnimationId = "rbxassetid://"..asset
+local k = game.Players.LocalPlayer.Character.Humanoid:LoadAnimation(Anim)
+k:Play(9999999999999)
+k.Priority = Enum.AnimationPriority.Action
+k:AdjustSpeed(0)
 	local IsGroup = false
 	local MadeOneLoop = false
 	local FirstFramePlayed = true
